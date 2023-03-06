@@ -36,7 +36,7 @@ https://towardsdatascience.com/installing-hadoop-3-2-1-single-node-cluster-on-wi
 
         spark = SparkSession.builder.appName('LearnSpark').getOrCreate() 
 
-### DataFrame
+# DataFrame Basics
 
 DataFrame is a Data Structure in which we can perform various kinds of operations.
 
@@ -62,7 +62,7 @@ DataFrame is a Data Structure in which we can perform various kinds of operation
 ## Reading a CSV
 
     df_spark = spark.read.csv('test.csv')
-    print(df_spark.show())
+    df_spark.show()
 
 **Output**:  
 
@@ -125,8 +125,132 @@ Here, even though Age is an integer, it  is taking Age as a string field. By def
 
     df_spark = spark.read.csv('test.csv', header=True, inferSchema=True)
 
+### Retrieving Column Names
+
+    print(df_spark.columns)
+
+**Output**: 
+
+    ['Name', 'City', 'Age']
+
+### Get Top 2 Records (in DataFrame format)
+
+    print(df_spark.head(2))
+
+**Output**: 
+
+    [Row(Name='Adrita', City='Bangalore', Age=30), Row(Name='Deepika', City='Kolkata', Age=29)]
+
+### Select one Column 
+
+    df_spark.select('Name')
+
+**Output**: 
+
+    DataFrame[Name: string]
+
+### Select Column with entire data
+
+    df_spark.select('Name').show()
+
+**Output**: 
+
+    +-------+
+    |   Name|
+    +-------+
+    | Adrita|
+    |Deepika|
+    | Ankita|
+    +-------+
+
+### Select more than one Column 
+
+    df_spark.select(['Name','Age']).show()
+
+**Output**: 
+
+    +-------+---+
+    |   Name|Age|
+    +-------+---+
+    | Adrita| 30|
+    |Deepika| 29|
+    | Ankita| 28|
+    +-------+---+
+
+### Column Data Types
+
+    print(df_spark.dtypes)
+
+**Output**: 
+
+    [('Name', 'string'), ('City', 'string'), ('Age', 'int')]
+
+### Checking with Describe Options
+
+    df_spark.describe()
+
+**Output**:  
+
+    DataFrame[summary: string, Name: string, City: string, Age: string]
+
+### Checking with Describe Options Show
+
+Here we get summary column.
+
+    df_spark.describe().show()
+
+**Output**:  
+
+    +-------+-------+---------+----+
+    |summary|   Name|     City| Age|
+    +-------+-------+---------+----+
+    |  count|      3|        3|   3|
+    |   mean|   null|     null|29.0|
+    | stddev|   null|     null| 1.0|
+    |    min| Adrita|Bangalore|  28|
+    |    max|Deepika|  Kolkata|  30|
+    +-------+-------+---------+----+
 
 
+### Adding Columns in Data Frame
+
+    df_spark.withColumn('Age after 5 Years', df_spark['Age'] + 5).show()
+
+**Output**: 
+
+    +-------+---------+---+-----------------+
+    |   Name|     City|Age|Age after 5 Years|
+    +-------+---------+---+-----------------+
+    | Adrita|Bangalore| 30|               35|
+    |Deepika|  Kolkata| 29|               34|
+    | Ankita| Guwahati| 28|               33|
+    +-------+---------+---+-----------------+
 
 
+### Dropping Columns from Data Frame
 
+df_spark.drop('Age').show() 
+
+**Output**: 
+
+    +-------+---------+
+    |   Name|     City|
+    +-------+---------+
+    | Adrita|Bangalore|
+    |Deepika|  Kolkata|
+    | Ankita| Guwahati|
+    +-------+---------+
+
+### Rename Column in Data Frame
+
+    df_spark.withColumnRenamed('Name', 'Label').show() 
+
+**Output**: 
+
+    +-------+---------+---+
+    |  Label|     City|Age|
+    +-------+---------+---+
+    | Adrita|Bangalore| 30|
+    |Deepika|  Kolkata| 29|
+    | Ankita| Guwahati| 28|
+    +-------+---------+---+
