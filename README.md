@@ -212,6 +212,7 @@ Here we get summary column.
     +-------+-------+---------+----+
 
 
+
 ### Adding Columns in Data Frame
 
     df_spark.withColumn('Age after 5 Years', df_spark['Age'] + 5).show()
@@ -254,3 +255,134 @@ df_spark.drop('Age').show()
     |Deepika|  Kolkata| 29|
     | Ankita| Guwahati| 28|
     +-------+---------+---+
+
+# DataFrame Missing Value Operation   
+
+### Reading Data with empty values
+
+
+df_spark = spark.read.csv('test_data.csv', header=True, inferSchema=True)
+df_spark.show()
+
+**Output**:
+
+    +-----+---------+----+------+
+    | Name|     City| Age|Salary|
+    +-----+---------+----+------+
+    | Riya|Bangalore|  30| 20000|
+    | Rupa|  Kolkata|  29| 30000|
+    |Sonai| Guwahati|  28| 25000|
+    | null|     null|null|  null|
+    | null|  Kolkata|  33| 55000|
+    |Guddu|     null|  30| 60000|
+    +-----+---------+----+------+
+
+
+### Drop Specific Rows with null value
+
+It drops all the rows that have any null value
+
+    df_spark.na.drop().show() 
+
+**Output**:
+
+    +-----+---------+---+------+
+    | Name|     City|Age|Salary|
+    +-----+---------+---+------+
+    | Riya|Bangalore| 30| 20000|
+    | Rupa|  Kolkata| 29| 30000|
+    |Sonai| Guwahati| 28| 25000|
+    +-----+---------+---+------+    
+
+Signature
+
+    df_spark.na.drop(how='any', thres=None, subset=None)
+
+_ **how** - any/all    
+    any - Drop a row if it contains any nulls
+    all - Drop a row if all its values are  null
+
+_ **thres** - None/number  
+    
+    thres=2 - atleast 2 non-null values should be presesnt in a row
+
+_ **subset** - None/[columnName]  
+    
+    subset=['Age'] - if Age has null value, the whole row will get deleted
+
+### Filling missing value
+
+    df_spark.na.fill('NA').show() 
+
+    Note: Adding `inferSchema=True` doesn't consider intergers while filling
+
+**Output**:
+
+    +-----+---------+----+------+
+    | Name|     City| Age|Salary|
+    +-----+---------+----+------+
+    | Riya|Bangalore|  30| 20000|
+    | Rupa|  Kolkata|  29| 30000|
+    |Sonai| Guwahati|  28| 25000|
+    |   NA|       NA|null|  null|
+    |   NA|  Kolkata|  33| 55000|
+    |Guddu|       NA|  30| 60000|
+    +-----+---------+----+------+
+
+### Filling missing value in specific columns  
+
+    df_spark = spark.read.csv('test_data.csv', header=True)
+
+    df_spark.na.fill('Missing Value', ['Age','Salary']).show() 
+
+
+**Output**:
+
+    +-----+---------+-------------+-------------+
+    | Name|     City|          Age|       Salary|
+    +-----+---------+-------------+-------------+
+    | Riya|Bangalore|           30|        20000|
+    | Rupa|  Kolkata|           29|        30000|
+    |Sonai| Guwahati|           28|        25000|
+    | null|     null|Missing Value|Missing Value|
+    | null|  Kolkata|           33|        55000|
+    |Guddu|     null|           30|        60000|
+    +-----+---------+-------------+-------------+
+
+
+### Filling missing columns value with mean/median 
+
+
+**Import Imputer**:
+
+    from pyspark.ml.feature import Imputer
+
+-
+    df_spark = spark.read.csv('test_data.csv', header=True, inferSchema=True)
+
+    imputer = Imputer(
+        inputCols=['Age', 'Salary'], 
+        outputCols=["{}_imputed".format(c) for c in ['Age', 'Salary']]
+        ).setStrategy("median")
+
+Add imputation cols to df. Here null will be replaced bu the mean value of the respective column
+
+    imputer.fit(df_spark).transform(df_spark).show()  
+
+**Output**:
+
+    +-----+---------+----+------+-----------+--------------+
+    | Name|     City| Age|Salary|Age_imputed|Salary_imputed|
+    +-----+---------+----+------+-----------+--------------+
+    | Riya|Bangalore|  30| 20000|         30|         20000|
+    | Rupa|  Kolkata|  29| 30000|         29|         30000|
+    |Sonai| Guwahati|  28| 25000|         28|         25000|
+    | null|     null|null|  null|         30|         38000|
+    | null|  Kolkata|  33| 55000|         33|         55000|
+    |Guddu|     null|  30| 60000|         30|         60000|
+    +-----+---------+----+------+-----------+--------------+
+
+
+# DataFrame Filter Operation   
+
+### 
