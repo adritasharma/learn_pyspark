@@ -282,7 +282,7 @@ df_spark.show()
 
 It drops all the rows that have any null value
 
-    df_spark.na.drop().show() 
+    df_spark.na.drop().show()  
 
 **Output**:
 
@@ -298,23 +298,23 @@ Signature
 
     df_spark.na.drop(how='any', thres=None, subset=None)
 
-_ **how** - any/all    
-    any - Drop a row if it contains any nulls
-    all - Drop a row if all its values are  null
+- **how** - any/all    
+any - Drop a row if it contains any nulls
+all - Drop a row if all its values are  null
 
-_ **thres** - None/number  
+- **thres** - None/number  
     
-    thres=2 - atleast 2 non-null values should be presesnt in a row
+thres=2 - atleast 2 non-null values should be presesnt in a row
 
-_ **subset** - None/[columnName]  
+- **subset** - None/[columnName]  
     
-    subset=['Age'] - if Age has null value, the whole row will get deleted
+subset=['Age'] - if Age has null value, the whole row will get deleted
 
 ### Filling missing value
 
     df_spark.na.fill('NA').show() 
 
-    Note: Adding `inferSchema=True` doesn't consider intergers while filling
+Note: Adding `inferSchema=True` doesn't consider intergers while filling
 
 **Output**:
 
@@ -357,7 +357,7 @@ _ **subset** - None/[columnName]
 
     from pyspark.ml.feature import Imputer
 
--
+
     df_spark = spark.read.csv('test_data.csv', header=True, inferSchema=True)
 
     imputer = Imputer(
@@ -428,3 +428,71 @@ df_pyspark.filter((df_pyspark['Salary']<=30000) &
     | Rupa|  Kolkata| 29| 30000|
     |Sonai| Guwahati| 28| 25000|
     +-----+---------+---+------+
+
+
+# DataFrame Group By and Aggregate Operations
+
+
+    df_pyspark = spark.read.csv('agg_data.csv', header=True, inferSchema=True)
+    df_pyspark.show()
+
+**Output**: 
+
+    +------+---------+---+------+----------+
+    |  Name|     City|Age|Salary|Department|
+    +------+---------+---+------+----------+
+    |  Riya|Bangalore| 30| 20000|        IT|
+    |  Rupa|  Kolkata| 29| 30000|   Finance|
+    | Sonai| Guwahati| 28| 25000|   Finance|
+    |Rishav|  Kolkata| 33| 55000|        IT|
+    | Guddu|Bangalore| 30| 60000|Automotive|
+    +------+---------+---+------+----------+
+
+## Group by
+
+### Employees under each department
+
+    df_pyspark.groupBy('Department').count().show()
+
+**Output**: 
+
+    +----------+-----+
+    |Department|count|
+    +----------+-----+
+    |   Finance|    2|
+    |Automotive|    1|
+    |        IT|    2|
+    +----------+-----+
+
+### Grouped to find the total salary of each department
+
+    df_pyspark.groupBy('Department').sum().show()    
+
+It adds  sum of all numeric columns
+
+**Output**: 
+
+    +----------+--------+-----------+
+    |Department|sum(Age)|sum(Salary)|
+    +----------+--------+-----------+
+    |   Finance|      57|      55000|
+    |Automotive|      30|      60000|
+    |        IT|      63|      75000|
+    +----------+--------+-----------+
+
+### Same can be performed for average, mean, min, max  pivot etc
+
+    df_pyspark.groupBy('Department').avg().show()
+    df_pyspark.groupBy('Department').mean().show()
+
+### Aggregate    
+
+    df_pyspark.agg({'Salary':'sum'}).show()
+
+**Output**: 
+
+    +-----------+
+    |sum(Salary)|
+    +-----------+
+    |     190000|
+    +-----------+
