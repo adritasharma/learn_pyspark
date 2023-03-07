@@ -385,4 +385,46 @@ Add imputation cols to df. Here null will be replaced bu the mean value of the r
 
 # DataFrame Filter Operation   
 
-### 
+### Salary < 30000
+
+    df_pyspark.filter("Salary<=30000").show()
+
+**Output**:
+
+    +-----+---------+---+------+
+    | Name|     City|Age|Salary|
+    +-----+---------+---+------+
+    | Riya|Bangalore| 30| 20000|
+    | Rupa|  Kolkata| 29| 30000|
+    |Sonai| Guwahati| 28| 25000|
+    +-----+---------+---+------+
+
+### Salary  > 20000 & < 30000
+
+df_pyspark.filter((df_pyspark['Salary']<=30000) &
+                  (df_pyspark['Salary']>=20000)).select(['Name','Salary']).show()
+
+**Output**:        
+
+    +-----+------+
+    | Name|Salary|
+    +-----+------+
+    | Riya| 20000|
+    | Rupa| 30000|
+    |Sonai| 25000|
+    +-----+------+           
+
+
+### NOT (~) Operation !Salary > 50000 
+
+    df_pyspark.filter(~(df_pyspark['Salary']>50000)).show()    
+
+**Output**: 
+
+    +-----+---------+---+------+
+    | Name|     City|Age|Salary|
+    +-----+---------+---+------+
+    | Riya|Bangalore| 30| 20000|
+    | Rupa|  Kolkata| 29| 30000|
+    |Sonai| Guwahati| 28| 25000|
+    +-----+---------+---+------+
