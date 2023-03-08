@@ -496,3 +496,8 @@ It adds  sum of all numeric columns
     +-----------+
     |     190000|
     +-----------+
+
+
+# DATA BRICKS   
+
+It is a platform for Data Engineering, Data Science, Analytics and Machine Learning.
