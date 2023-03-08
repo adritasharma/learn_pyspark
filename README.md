@@ -501,3 +501,13 @@ It adds  sum of all numeric columns
 # DATA BRICKS   
 
 It is a platform for Data Engineering, Data Science, Analytics and Machine Learning.
+
+## Getting Started
+
+- Create Account in databricks.com
+- Choose AWS or any other Cloud Provider
+- Login to the AWS Account (in a seperate tab)
+- Create Workspace - provide necessary details
+- It will redirect to AWS Stack creation
+
+![image](https://user-images.githubusercontent.com/29271635/223692313-599cdd83-57b1-4bd8-92fd-0f06eecf4655.png)
