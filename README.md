@@ -20,11 +20,19 @@ Apache Spark is written in Scala programming language. To support Python with Sp
 
 PySpark offers PySpark Shell which links the Python API to the spark core and initializes the Spark context.
 
-## Installation
+## Setup
 
 Prerequisite: Install Java and Hadoop
 
 https://towardsdatascience.com/installing-hadoop-3-2-1-single-node-cluster-on-windows-10-ac258dd48aef
+
+- Install Java 8 runtime environment (JRE)
+- Download download Hadoop binaries and extract
+- Setting up environment variables
+    - JAVA_HOME: JDK installation folder path
+    - HADOOP_HOME: Hadoop installation folder path
+
+## Installation
 
     pip install pyspark
 
